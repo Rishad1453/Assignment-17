@@ -8,10 +8,8 @@ from typing import List, Set
 class BanglaProcessor:
     """Handle Bangla text processing, normalization, and tokenization"""
 
-    # Bangla unicode ranges
-    BANGLA_SCRIPT_RANGE = (0x0980, 0x09FF)  # Bengali script range
+    BANGLA_SCRIPT_RANGE = (0x0980, 0x09FF)
     
-    # Common Bangla stop words
     STOP_WORDS = {
         'এ', 'এর', 'অন', 'একটি', 'কোন', 'কিছু', 'যা', 'যে', 'যদি', 'তবে',
         'এবং', 'কিংবা', 'অথবা', 'না', 'নয়', 'সঙ্গে', 'থেকে', 'পর্যন্ত',
@@ -36,19 +34,12 @@ class BanglaProcessor:
         if not text:
             return text
         
-        # NFD normalization to decompose characters
         text = unicodedata.normalize('NFD', text)
-        
-        # Remove diacritical marks (nukta, vowel signs, etc.)
         text = ''.join(
             char for char in text 
             if not unicodedata.combining(char)
         )
-        
-        # NFC normalization back
         text = unicodedata.normalize('NFC', text)
-        
-        # Remove extra whitespace
         text = re.sub(r'\s+', ' ', text)
         text = text.strip()
         

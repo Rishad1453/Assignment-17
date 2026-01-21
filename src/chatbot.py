@@ -63,35 +63,29 @@ class BanglaFAQChatbot:
             Tuple of (results, is_fallback) where results is list of (FAQ, score)
         """
         try:
-            # Step 1: Validate topic
             if not self.filter.is_valid_topic(topic):
                 return None, True
             
-            # Step 2: Filter FAQs by topic
             filtered_faqs = self.filter.filter_by_topic(
                 self.retriever.get_all_faqs(),
                 topic
             )
             
-            # Step 3: Apply difficulty filter if provided
             if difficulty and self.filter.is_valid_difficulty(difficulty):
                 filtered_faqs = self.filter.filter_by_difficulty(filtered_faqs, difficulty)
             
             if not filtered_faqs:
                 return None, True
             
-            # Step 4: Retrieve relevant FAQs
             results = self.retriever.retrieve(
                 query,
                 candidates=filtered_faqs,
                 top_k=top_k
             )
             
-            # Step 5: Check if results meet confidence threshold
             if results and results[0][1] >= self.CONFIDENCE_THRESHOLD:
                 return results, False
             
-            # No good match found
             return None, True
             
         except Exception as e:

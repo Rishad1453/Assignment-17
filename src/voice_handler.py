@@ -39,17 +39,16 @@ class VoiceHandler:
         self.recognizer = self._init_recognizer()
 
     def _init_tts(self):
-        """Initialize TTS engine"""
+        \"\"\"Initialize TTS engine\"\"\"
         if not PYTTSX3_AVAILABLE:
-            print("⚠️  Warning: pyttsx3 not installed. TTS not available.")
+            print(\"⚠️  Warning: pyttsx3 not installed. TTS not available.\")
             return None
-        
         try:
             engine = pyttsx3.init()
-            engine.setProperty('rate', 150)  # Speed
+            engine.setProperty('rate', 150)
             return engine
         except Exception as e:
-            print(f"⚠️  Error initializing TTS: {e}")
+            print(f\"⚠️  Error initializing TTS: {e}\")
             return None
 
     def _init_recognizer(self):
@@ -95,24 +94,18 @@ class VoiceHandler:
             return False
 
     def _speak_gtts(self, text: str) -> bool:
-        """Speak using Google Text-to-Speech"""
+        \"\"\"Speak using Google Text-to-Speech\"\"\"
         if not GTTS_AVAILABLE:
-            print("❌ gTTS not available")
+            print(\"❌ gTTS not available\")
             return False
-        
         try:
             tts = gTTS(text=text, lang=self.language, slow=False)
-            tts.save("/tmp/response.mp3")
-            
-            # Try to play with system command
+            tts.save(\"/tmp/response.mp3\")
             import os
-            os.system("afplay /tmp/response.mp3")  # macOS
-            # On Linux: os.system("mpg123 /tmp/response.mp3")
-            # On Windows: os.system("start /tmp/response.mp3")
-            
+            os.system(\"afplay /tmp/response.mp3\")
             return True
         except Exception as e:
-            print(f"❌ Error with gTTS: {e}")
+            print(f\"❌ Error with gTTS: {e}\")
             return False
 
     def recognize(self) -> str:

@@ -45,26 +45,16 @@ class FAQRetriever:
         Returns:
             Similarity score (0-1)
         """
-        # Tokenize and normalize
         query_tokens = set(BanglaProcessor.tokenize(query.lower()))
         text_tokens = set(BanglaProcessor.tokenize(text.lower()))
         
         if not query_tokens or not text_tokens:
             return 0.0
         
-        # Calculate Jaccard similarity
         intersection = query_tokens & text_tokens
         union = query_tokens | text_tokens
         
-        jaccard_sim = len(intersection) / len(union) if union else 0.0
-        
-        # Bonus for keyword matches
-        keywords_match = 0
-        if 'keywords' in self.faqs[0]:  # Check if FAQ has keywords field
-            # This is a placeholder - keywords would be extracted from FAQs
-            pass
-        
-        return jaccard_sim
+        return len(intersection) / len(union) if union else 0.0
 
     def _rank_results(self, query: str, candidates: List[Dict]) -> List[Tuple[Dict, float]]:
         """
@@ -80,23 +70,16 @@ class FAQRetriever:
         results = []
         
         for faq in candidates:
-            # Calculate similarity with question and keywords
             question_sim = self._calculate_similarity(query, faq.get('question', ''))
-            
-            # Boost score if keywords match
             keyword_score = 0
             for keyword in faq.get('keywords', []):
                 if keyword.lower() in query.lower():
                     keyword_score += 0.3
             
-            # Combined score
             total_score = (question_sim * 0.7) + min(keyword_score, 0.3)
-            
             results.append((faq, total_score))
         
-        # Sort by score descending
         results.sort(key=lambda x: x[1], reverse=True)
-        
         return results
 
     def retrieve(
@@ -116,16 +99,11 @@ class FAQRetriever:
         Returns:
             List of (FAQ, score) tuples
         """
-        # Use all FAQs if candidates not provided
         search_space = candidates if candidates else self.faqs
-        
         if not search_space:
             return []
         
-        # Rank candidates
         ranked = self._rank_results(query, search_space)
-        
-        # Return top-k results
         return ranked[:top_k]
 
     def get_faq_by_id(self, faq_id: str) -> Optional[Dict]:
